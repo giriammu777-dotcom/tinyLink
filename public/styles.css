@@ -9,6 +9,12 @@
   --gap:1rem;
   font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
   color-scheme: light;
+
+  /* 🌈 Added gradients */
+  --grad-header: linear-gradient(90deg, #4f46e5, #0ea5e9);
+  --grad-bg: linear-gradient(180deg, #e0f2fe, #f7f8fb);
+  --grad-btn: linear-gradient(90deg, #2563eb, #4f46e5);
+  --grad-code: linear-gradient(90deg, #dbeafe, #bfdbfe);
 }
 
 /* Reset-ish */
@@ -16,7 +22,7 @@
 html,body{height:100%}
 body{
   margin:0;
-  background:var(--bg);
+  background:var(--grad-bg); /* 🌈 Gradient background */
   color:#111827;
   -webkit-font-smoothing:antialiased;
   -moz-osx-font-smoothing:grayscale;
@@ -39,9 +45,9 @@ body{
 }
 
 .site-header{
-  background:linear-gradient(180deg, #fff, #fbfdff);
+  background:var(--grad-header); /* 🌈 Gradient header */
   border-bottom:1px solid rgba(16,24,40,0.04);
-  box-shadow: 0 1px 0 rgba(16,24,40,0.02);
+  box-shadow: 0 1px 0 rgba(16,24,40,0.06);
   position:sticky;
   top:0;
   z-index:40;
@@ -53,13 +59,20 @@ body{
   padding:1rem 0;
 }
 
-.brand a, .brand { color: var(--accent); text-decoration:none; font-weight:600; }
+.brand a, .brand { 
+  color: #fff; /* header text white */
+  text-decoration:none; 
+  font-weight:700; 
+}
 
-.nav-link{ color:var(--muted); text-decoration:none; margin-left:0.75rem }
-.nav-link:hover{ color:var(--accent) }
-
-.main > .stats-card {
-  grid-column: 1 / -1;
+.nav-link{ 
+  color:#e0e7ff; 
+  text-decoration:none; 
+  margin-left:0.75rem;
+  font-weight:500;
+}
+.nav-link:hover{ 
+  color:#fff; 
 }
 
 /* Cards */
@@ -67,25 +80,11 @@ body{
   background:var(--card);
   border-radius:var(--radius);
   padding:1rem;
-  box-shadow: 0 6px 18px rgba(11,76,189,0.04);
+  box-shadow: 0 6px 20px rgba(59,130,246,0.15); /* 🌈 Subtle blue glow */
   border:1px solid rgba(16,24,40,0.03);
 }
 
-/* Create form */
-.create-card h2, .list-card h2{ margin:0 0 0.5rem 0; }
-.form{ display:flex; flex-direction:column; gap:0.6rem; }
-.form label{ display:flex; flex-direction:column; gap:0.35rem; font-size:0.95rem; color:#111827}
-.form input[type="text"], .form input[type="url"], .search-wrap input{
-  padding:0.6rem 0.75rem;
-  border-radius:8px;
-  border:1px solid rgba(16,24,40,0.08);
-  background:transparent;
-  font-size:0.95rem;
-}
-.hint{ color:var(--muted); font-size:0.85rem; }
-
-.form-row{ display:flex; gap:0.5rem; margin-top:0.5rem; align-items:center }
-
+/* Buttons */
 .btn{
   display:inline-block;
   padding:0.6rem 0.9rem;
@@ -95,17 +94,31 @@ body{
   cursor:pointer;
   font-weight:600;
   text-decoration:none;
+  transition:0.2s ease;
 }
-.btn:hover{ transform:translateY(-1px); }
+.btn:hover{ transform:translateY(-2px); }
+
 .btn.primary{
-  background:var(--accent);
+  background:var(--grad-btn); /* 🌈 Gradient button */
   color:#fff;
   border-color:transparent;
+  box-shadow: 0 4px 12px rgba(37,99,235,0.3);
 }
+
 .btn.danger{
-  background:var(--danger);
+  background:linear-gradient(90deg, #e11d48, #f43f5e); /* 🌈 red gradient */
   color:#fff;
   border-color:transparent;
+  box-shadow: 0 4px 12px rgba(225,29,72,0.3);
+}
+
+/* Form Inputs */
+.form input[type="text"], .form input[type="url"], .search-wrap input{
+  padding:0.6rem 0.75rem;
+  border-radius:8px;
+  border:1px solid rgba(16,24,40,0.1);
+  background:rgba(255,255,255,0.6);
+  font-size:0.95rem;
 }
 
 /* Table */
@@ -119,19 +132,39 @@ body{
   font-size:0.95rem;
 }
 .links-table th{ color:var(--muted); font-weight:600; font-size:0.85rem; }
-.code-pill{ display:inline-block; padding:0.25rem 0.5rem; border-radius:6px; background:#f1f5f9; font-weight:700; color:#0f172a; text-decoration:none; }
-.link-target{ display:inline-block; max-width:46ch; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; color:#0b5cff; text-decoration:none; }
-.actions{ display:flex; gap:0.5rem; align-items:center }
 
-/* States */
-.state{ color:var(--muted); padding:0.75rem 0; }
-.msg{ color:var(--muted); padding-top:0.4rem; }
+/* Code gradient */
+.code-pill{ 
+  display:inline-block; 
+  padding:0.25rem 0.5rem; 
+  border-radius:6px; 
+  background:var(--grad-code); /* 🌈 code pill gradient */
+  font-weight:700; 
+  color:#1e3a8a; 
+  text-decoration:none; 
+}
 
-.small{ font-size:0.85rem }
-.center{ text-align:center }
+/* Links */
+.link-target{ 
+  display:inline-block; 
+  max-width:46ch; 
+  white-space:nowrap; 
+  overflow:hidden; 
+  text-overflow:ellipsis; 
+  color:#0b5cff; 
+  text-decoration:none; 
+}
+.link-target:hover{
+  color:#1e40af;
+}
 
-/* Stats page */
-.stats-list{ display:grid; grid-template-columns: 160px 1fr; gap:0.5rem 1rem; align-items:start }
+/* Stats */
+.stats-list{ 
+  display:grid; 
+  grid-template-columns: 160px 1fr; 
+  gap:0.5rem 1rem; 
+  align-items:start 
+}
 .stats-list dt{ color:var(--muted); font-size:0.9rem }
 .stats-list dd{ margin:0; font-weight:600 }
 
