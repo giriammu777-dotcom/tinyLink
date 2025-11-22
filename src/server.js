@@ -31,7 +31,7 @@ const viewsPath = path.join(__dirname, "views");
 app.use("/api/links", linksRouter);
 app.use("/health", healthRouter);
 
-// Frontend Pages (must be BEFORE redirect route)
+// Frontend Pages
 app.get("/", (req, res) => {
   res.sendFile(path.join(viewsPath, "index.html"));
 });
@@ -40,15 +40,11 @@ app.get("/code/:code", (req, res) => {
   res.sendFile(path.join(viewsPath, "stats.html"));
 });
 
-// Redirect route (MUST BE LAST normal route)
+// Redirect route (MUST be after API + pages)
 app.get("/:code", redirectUrl);
 
-// 404 Handler (ALWAYS LAST)
+// 404 Handler (always last)
 app.use((req, res) => {
   res.status(404).sendFile(path.join(viewsPath, "404.html"));
 });
 
-// Start server
-app.listen(PORT, () => {
-  console.log(`🚀 Server running at http://localhost:${PORT}`);
-});
