@@ -1,8 +1,17 @@
 // src/controllers/linksController.js
 import pool from "../db.js";
 import crypto from "crypto";
+import path from "path";
+import { fileURLToPath } from "url";
 
-// Generate random 8-character code
+// Fix for __dirname (ESM)
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+// Path to 404.html
+const viewsPath = path.join(__dirname, "../views");
+
+// Helper: random 8-char code
 function generateCode() {
   return crypto.randomBytes(4).toString("hex").slice(0, 8);
 }
@@ -10,33 +19,25 @@ function generateCode() {
 // CREATE short URL
 export async function createShortUrl(req, res) {
   try {
-    console.log(
-      "🟨 [DEBUG] Incoming POST /api/links — body:",
-      JSON.stringify(req.body)
-    );
+    console.log("🟨 [DEBUG] POST /api/links:", req.body);
 
     const { target_url, code } = req.body;
 
     if (!target_url) {
-      console.log("❌ Missing target_url");
       return res.status(400).json({ error: "target_url is required" });
     }
 
-    // Generate random code if missing
     let shortCode = code || generateCode();
 
-    // Check existing code
     const exists = await pool.query(
       "SELECT code FROM links WHERE code = $1",
       [shortCode]
     );
 
     if (exists.rows.length > 0) {
-      console.log("⚠️ Code already exists:", shortCode);
       return res.status(409).json({ error: "Code already exists" });
     }
 
-    // Insert new
     const result = await pool.query(
       `INSERT INTO links (code, target_url)
        VALUES ($1, $2)
@@ -44,8 +45,7 @@ export async function createShortUrl(req, res) {
       [shortCode, target_url]
     );
 
-    console.log("✅ Created short URL:", result.rows[0]);
-
+    console.log("✅ Created:", result.rows[0]);
     return res.status(201).json(result.rows[0]);
 
   } catch (err) {
@@ -64,6 +64,7 @@ export async function getAllLinks(req, res) {
     );
 
     res.json(result.rows);
+
   } catch (err) {
     console.error("💥 getAllLinks error:", err);
     res.status(500).json({ error: "Server error" });
@@ -82,7 +83,6 @@ export async function getStats(req, res) {
     );
 
     if (result.rows.length === 0) {
-      console.log("❌ Stats not found:", code);
       return res.status(404).json({ error: "Not found" });
     }
 
@@ -123,7 +123,11 @@ export async function redirectUrl(req, res) {
 
     if (result.rows.length === 0) {
       console.log("❌ Redirect code not found:", code);
-      return res.status(404).sendFile("404.html");
+
+      // FIX: send absolute path
+      return res
+        .status(404)
+        .sendFile(path.join(viewsPath, "404.html"));
     }
 
     const url = result.rows[0].target_url;
@@ -137,7 +141,6 @@ export async function redirectUrl(req, res) {
     );
 
     console.log("🔁 Redirecting to:", url);
-
     res.redirect(url);
 
   } catch (err) {
