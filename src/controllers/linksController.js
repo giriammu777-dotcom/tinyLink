@@ -7,28 +7,36 @@ function generateCode() {
   return crypto.randomBytes(4).toString("hex").slice(0, 8);
 }
 
-// CREATE short URL and return full row
+// CREATE short URL
 export async function createShortUrl(req, res) {
   try {
+    console.log(
+      "🟨 [DEBUG] Incoming POST /api/links — body:",
+      JSON.stringify(req.body)
+    );
+
     const { target_url, code } = req.body;
 
-    if (!target_url)
+    if (!target_url) {
+      console.log("❌ Missing target_url");
       return res.status(400).json({ error: "target_url is required" });
+    }
 
-    // Generate random code if not provided
-    let shortCode = code || crypto.randomBytes(4).toString("hex").slice(0, 8);
+    // Generate random code if missing
+    let shortCode = code || generateCode();
 
-    // Check if the code already exists
+    // Check existing code
     const exists = await pool.query(
       "SELECT code FROM links WHERE code = $1",
       [shortCode]
     );
 
     if (exists.rows.length > 0) {
+      console.log("⚠️ Code already exists:", shortCode);
       return res.status(409).json({ error: "Code already exists" });
     }
 
-    // Insert and immediately return full object
+    // Insert new
     const result = await pool.query(
       `INSERT INTO links (code, target_url)
        VALUES ($1, $2)
@@ -36,10 +44,12 @@ export async function createShortUrl(req, res) {
       [shortCode, target_url]
     );
 
+    console.log("✅ Created short URL:", result.rows[0]);
+
     return res.status(201).json(result.rows[0]);
 
   } catch (err) {
-    console.error("createShortUrl error:", err);
+    console.error("💥 createShortUrl error:", err);
     return res.status(500).json({ error: "Server error" });
   }
 }
@@ -47,20 +57,24 @@ export async function createShortUrl(req, res) {
 // GET all links
 export async function getAllLinks(req, res) {
   try {
+    console.log("🟦 [DEBUG] GET /api/links");
+
     const result = await pool.query(
       "SELECT * FROM links ORDER BY created_at DESC"
     );
+
     res.json(result.rows);
   } catch (err) {
+    console.error("💥 getAllLinks error:", err);
     res.status(500).json({ error: "Server error" });
   }
 }
 
-// GET stats for a code — returns a single JSON object
+// GET stats
 export async function getStats(req, res) {
   try {
     const { code } = req.params;
-    if (!code) return res.status(400).json({ error: "code is required" });
+    console.log("🟩 [DEBUG] GET /api/links/" + code);
 
     const result = await pool.query(
       "SELECT code, target_url, total_clicks, last_clicked, created_at FROM links WHERE code = $1",
@@ -68,25 +82,31 @@ export async function getStats(req, res) {
     );
 
     if (result.rows.length === 0) {
+      console.log("❌ Stats not found:", code);
       return res.status(404).json({ error: "Not found" });
     }
 
-    // result.rows[0] is a plain JS object with the columns above
-    return res.status(200).json(result.rows[0]);
+    res.status(200).json(result.rows[0]);
+
   } catch (err) {
-    console.error("getStats error:", err);
+    console.error("💥 getStats error:", err);
     return res.status(500).json({ error: "Server error" });
   }
 }
 
-// DELETE link
+// DELETE URL
 export async function deleteUrl(req, res) {
   try {
     const { code } = req.params;
+    console.log("🗑️ [DEBUG] DELETE /api/links/" + code);
+
     await pool.query("DELETE FROM links WHERE code = $1", [code]);
+
     res.json({ success: true });
+
   } catch (err) {
-    res.status(500).json({ error: "Server error" });
+    console.error("💥 deleteUrl error:", err);
+    return res.status(500).json({ error: "Server error" });
   }
 }
 
@@ -94,6 +114,7 @@ export async function deleteUrl(req, res) {
 export async function redirectUrl(req, res) {
   try {
     const { code } = req.params;
+    console.log("➡️ [DEBUG] Redirect request /" + code);
 
     const result = await pool.query(
       "SELECT target_url FROM links WHERE code = $1",
@@ -101,6 +122,7 @@ export async function redirectUrl(req, res) {
     );
 
     if (result.rows.length === 0) {
+      console.log("❌ Redirect code not found:", code);
       return res.status(404).sendFile("404.html");
     }
 
@@ -114,9 +136,12 @@ export async function redirectUrl(req, res) {
       [code]
     );
 
+    console.log("🔁 Redirecting to:", url);
+
     res.redirect(url);
 
   } catch (err) {
-    res.status(500).send("Server error");
+    console.error("💥 redirectUrl error:", err);
+    return res.status(500).send("Server error");
   }
 }
