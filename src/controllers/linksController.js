@@ -124,10 +124,9 @@ export async function redirectUrl(req, res) {
     if (result.rows.length === 0) {
       console.log("❌ Redirect code not found:", code);
 
-      // FIX: send absolute path
-      return res
-        .status(404)
-        .sendFile(path.join(viewsPath, "404.html"));
+      // FIX → ABSOLUTE PATH FOR PRODUCTION
+      const file = path.join(process.cwd(), "src", "views", "404.html");
+      return res.status(404).sendFile(file);
     }
 
     const url = result.rows[0].target_url;
@@ -141,7 +140,7 @@ export async function redirectUrl(req, res) {
     );
 
     console.log("🔁 Redirecting to:", url);
-    res.redirect(url);
+    return res.redirect(url);
 
   } catch (err) {
     console.error("💥 redirectUrl error:", err);
