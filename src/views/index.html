@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>TinyLink — Dashboard</title>
+  <link rel="stylesheet" href="/styles.css" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-row">
+      <h1 class="brand">TinyLink</h1>
+      <nav>
+        <a href="/" class="nav-link">Dashboard</a>
+        <a href="/health" class="nav-link">Health</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container main">
+    <section class="card create-card" aria-labelledby="create-title">
+      <h2 id="create-title">Create a short link</h2>
+
+      <form id="create-form" class="form">
+        <label>
+          Long URL
+          <input id="input-url" name="target_url" type="url" placeholder="https://example.com/very/long/link" required>
+          <small class="hint">We validate the URL before saving.</small>
+        </label>
+
+        <label>
+          Custom code (optional, 6–8 chars A-Z a-z 0-9)
+          <input id="input-code" name="code" type="text" minlength="6" maxlength="8" placeholder="abcd12">
+        </label>
+
+        <div class="form-row">
+          <button id="create-btn" class="btn primary" type="submit">Create</button>
+          <button id="reset-btn" class="btn" type="button">Clear</button>
+        </div>
+
+        <p id="create-msg" class="msg" aria-live="polite"></p>
+      </form>
+    </section>
+
+    <section class="card list-card" aria-labelledby="list-title">
+      <div class="list-header">
+        <h2 id="list-title">Your links</h2>
+        <div class="search-wrap">
+          <input id="search" placeholder="Search by code or target URL" />
+        </div>
+      </div>
+
+      <div id="list-state" class="state">Loading links…</div>
+
+      <div class="table-wrap">
+        <table id="links-table" class="links-table" aria-live="polite">
+          <thead>
+            <tr>
+              <th>Code</th>
+              <th>Target URL</th>
+              <th>Clicks</th>
+              <th>Last clicked</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="links-body">
+            <!-- rows injected by JS -->
+          </tbody>
+        </table>
+      </div>
+
+      <p class="hint small">Click a code to view stats. Click target to open in a new tab.</p>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <small>Built for the TinyLink take-home assignment.</small>
+    </div>
+  </footer>
+
+  <script src="/scripts.js" defer></script>
+</body>
+</html>

@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>TinyLink — Stats</title>
+  <link rel="stylesheet" href="/styles.css" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-row">
+      <h1 class="brand"><a href="/" class="home-link">TinyLink</a></h1>
+      <nav>
+        <a href="/" class="nav-link">Dashboard</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container main">
+    <section class="card" id="stats-card">
+      <h2 id="stats-title">Link stats</h2>
+      <div id="stats-state" class="state">Loading…</div>
+
+      <dl id="stats-list" class="stats-list" hidden>
+        <dt>Short code</dt>
+        <dd id="stat-code"></dd>
+
+        <dt>Target URL</dt>
+        <dd id="stat-target"></dd>
+
+        <dt>Total clicks</dt>
+        <dd id="stat-clicks"></dd>
+
+        <dt>Last clicked</dt>
+        <dd id="stat-last"></dd>
+
+        <dt>Created at</dt>
+        <dd id="stat-created"></dd>
+      </dl>
+
+      <div class="actions">
+        <a id="open-redirect" class="btn" target="_blank" rel="noopener">Open redirect</a>
+        <button id="delete-btn" class="btn danger">Delete link</button>
+      </div>
+
+      <p id="stats-msg" class="msg"></p>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <small>TinyLink</small>
+    </div>
+  </footer>
+
+  <script src="/scripts.js" defer></script>
+</body>
+</html>
